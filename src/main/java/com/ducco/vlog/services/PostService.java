@@ -3,6 +3,10 @@ package com.ducco.vlog.services;
 import com.ducco.vlog.models.Post;
 import com.ducco.vlog.repositories.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +23,8 @@ public class PostService {
         return postRepo.findById(id).orElse(null);
     }
 
-    public List<Post> getAllPosts() {
-        return postRepo.findAll();
+    public Page<Post> getAllPosts(Pageable pageable) {
+        return postRepo.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))));
     }
 
     public Post createPost(Post newPost) {

@@ -3,9 +3,14 @@ package com.ducco.vlog.controllers;
 import com.ducco.vlog.models.Post;
 import com.ducco.vlog.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
 
 import java.net.URI;
 import java.util.List;
@@ -18,11 +23,11 @@ public class PostController {
     private PostService postService;
 
 
-
     @GetMapping()
-    public ResponseEntity<List<Post>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts) ;
+    public ResponseEntity<List<Post>> getAllPosts(Pageable pageable) {
+        Page<Post> page = postService.getAllPosts(pageable);
+        List<Post> posts = page.getContent();
+        return ResponseEntity.ok(posts);
     }
 
 
@@ -46,7 +51,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<Void> updatePost(@RequestBody Post post,@PathVariable Long postId) {
+    public ResponseEntity<Void> updatePost(@RequestBody Post post, @PathVariable Long postId) {
         Post needUpdatingPost = new Post(postId, post.getTitle(), post.getContent());
         postService.updatePost(needUpdatingPost);
         return ResponseEntity.noContent().build();
@@ -57,11 +62,6 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
     }
-
-
-
-
-
 
 
 }
