@@ -11,9 +11,9 @@ import java.util.List;
 public class PostHelper {
 
     List<Post> posts = new ArrayList<Post>(Arrays.asList(
-            new Post(1L,"Post 1","This is the content of post 1" ),
-            new Post(2L,"Post 2","This is the content of post 2" ),
-            new Post(3L,"Post 3","This is the content of post 3" )
+            new Post(1L,"Post c","This is the content of post 1" ),
+            new Post(2L,"Post a","This is the content of post 2" ),
+            new Post(3L,"Post b","This is the content of post 3" )
     ));
     public Long getUnknownId(){
         return 0L;
@@ -22,10 +22,10 @@ public class PostHelper {
         return posts.getFirst();
     }
     public Post getNewPost(){
-        return new Post(4L,"Post 4","This is the content of post 4" );
+        return new Post(4L,"Post d","This is the content of post 4" );
     }
     public Post getNeedUpdatingPost(){
-        return new Post(1L,"Post 1 updated","This is the content updated" );
+        return new Post(1L,"Post c updated","This is the content updated" );
     }
     public  List<Post> getPosts(){
         return posts;
