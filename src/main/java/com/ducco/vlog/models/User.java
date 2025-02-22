@@ -9,6 +9,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table(name = "users")
 public class User {
 
     @Id
@@ -31,6 +32,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name="role_id",referencedColumnName = "id")
     )
     private Collection<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Post> posts;
 
 
 //    @Id

@@ -9,6 +9,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Table(name = "roles")
 public class Role {
 
       @Id
