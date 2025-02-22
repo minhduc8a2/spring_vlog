@@ -6,6 +6,7 @@ import com.ducco.vlog.models.User;
 import com.ducco.vlog.repositories.PrivilegeRepository;
 import com.ducco.vlog.repositories.RoleRepository;
 import com.ducco.vlog.repositories.UserRepository;
+import com.ducco.vlog.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -22,7 +23,7 @@ public class SetupDataLoader implements
     boolean alreadySetup = false;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -50,12 +51,12 @@ public class SetupDataLoader implements
         createRoleIfNotFound("ROLE_USER", Arrays.asList(readPrivilege));
 
         Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-        User admin = new User(null, "Admin", "Admin", "admin@gmail.com", passwordEncoder.encode("admin"), true, false, Collections.singletonList(adminRole));
-        userRepository.save(admin);
+        User admin = new User(null, "Admin", "Admin", "admin@gmail.com", passwordEncoder.encode("admin"), true, true, Collections.singletonList(adminRole));
+        userService.createUser(admin);
 
         Role userRole = roleRepository.findByName("ROLE_USER");
-        User normalUser = new User(null, "User", "User", "user@gmail.com", passwordEncoder.encode("user"), true, false, Collections.singletonList(userRole));
-        userRepository.save(normalUser);
+        User normalUser = new User(null, "User", "User", "user@gmail.com", passwordEncoder.encode("user"), true, true, Collections.singletonList(userRole));
+        userService.createUser(normalUser);
 
         alreadySetup = true;
     }

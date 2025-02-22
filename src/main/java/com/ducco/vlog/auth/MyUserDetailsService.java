@@ -1,8 +1,7 @@
 package com.ducco.vlog.auth;
-
 import com.ducco.vlog.models.Role;
 import com.ducco.vlog.models.User;
-import com.ducco.vlog.repositories.UserRepository;
+import com.ducco.vlog.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,25 +21,59 @@ import java.util.stream.Collectors;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
+        User user = userService.findByEmail(email);
+        if(user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
+
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), user.isEnabled(), true, true,
-                true, getAuthorities(user.getRoles()));
+                user.getEmail(),
+                user.getPassword(),
+                user.isEnabled(),
+                user.isTokenNonExpired(),
+                true,
+                true,
+                getAuthorities(user.getRoles())
+                );
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
+    public Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
         Set<String> privileges = new HashSet<>();
-        for (Role role : roles) {
-            privileges.add(role.getName());
+        for(Role role : roles) {
             role.getPrivileges().forEach(privilege -> privileges.add(privilege.getName()));
+            privileges.add(role.getName());
+
         }
         return privileges.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+
     }
+
+
+//
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        User user = userRepository.findByEmail(email);
+//        if (user == null) {
+//            throw new UsernameNotFoundException("User not found with email: " + email);
+//        }
+//        return new org.springframework.security.core.userdetails.User(
+//                user.getEmail(), user.getPassword(), user.isEnabled(), true, user.isTokenExpired(),
+//                true, getAuthorities(user.getRoles()));
+//    }
+//
+//    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
+//        Set<String> privileges = new HashSet<>();
+//        for (Role role : roles) {
+//            privileges.add(role.getName());
+//            role.getPrivileges().forEach(privilege -> privileges.add(privilege.getName()));
+//        }
+//        return privileges.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+//    }
 }
